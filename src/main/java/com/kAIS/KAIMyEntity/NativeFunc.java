@@ -14,6 +14,7 @@ public class NativeFunc {
     private static final boolean isAndroid = new File("/system/build.prop").exists();
     private static final boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");
     private static final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
+    private static final boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
     private static final HashMap<runtimeUrlRes, String> urlMap = new HashMap<runtimeUrlRes, String>() {
         {
             put(runtimeUrlRes.android_arch64, "https://github.com.cnpmjs.org/asuka-mio/KAIMyEntitySaba/releases/download/crossplatform/KAIMyEntitySaba.so");
@@ -63,6 +64,10 @@ public class NativeFunc {
             KAIMyEntityClient.logger.info("Not support!");
             throw new Error();
         }
+        if (isMac) {
+            KAIMyEntityClient.logger.info("Not support!");
+            throw new Error();
+        }
         if (isLinux && isAndroid) {
             DownloadSingleFile(new URL(urlMap.get(runtimeUrlRes.android_arch64_libc)), new File(RuntimePath, "libc++_shared.so"));
             DownloadSingleFile(new URL(urlMap.get(runtimeUrlRes.android_arch64)), new File(RuntimePath, "KAIMyEntitySaba.so"));
@@ -92,6 +97,10 @@ public class NativeFunc {
                 KAIMyEntityClient.logger.info("Android Env Detected!");
                 LoadLibrary(new File(RuntimePath, "libc++_shared.so"));
                 LoadLibrary(new File(RuntimePath, "KAIMyEntitySaba.so"));//Android
+            }
+            if (isMac) {
+                KAIMyEntityClient.logger.info("Mac Env Detected!");
+                LoadLibrary(new File(MinecraftClient.getInstance().runDirectory.getAbsolutePath(), "KAIMyEntitySaba.dylib"));//Mac
             }
         } catch (Error e) {
             try {
